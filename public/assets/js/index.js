@@ -1,9 +1,9 @@
-let noteForm;
-let noteTitle;
-let noteText;
-let saveNoteBtn;
-let newNoteBtn;
-let noteList;
+let noteForm = document.querySelector('.note-form');
+let noteTitle = document.querySelector('.note-title');
+let noteText = document.querySelector('.note-textarea'); 
+let saveNoteBtn = document.querySelector('.save-note'); 
+let newNoteBtn = document.querySelector('.new-note');
+let noteList = document.querySelectorAll('.list-container .list-group');
 
 if (window.location.pathname === '/notes') {
   noteForm = document.querySelector('.note-form');
