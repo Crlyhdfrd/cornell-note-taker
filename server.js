@@ -29,7 +29,7 @@ app.get("/api/notes", (req, res) => {
 
 app.post("/api/notes", (req, res) => {
   const filePath = path.join(__dirname, "db", "db.json");
-
+  const maxIdFilePath = path.join(__dirname, "db", "maxId.json");
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
       return console.log(err);
@@ -37,14 +37,29 @@ app.post("/api/notes", (req, res) => {
 
     const notes = JSON.parse(data);
     const newNote = req.body;
-    console.log(newNote);
-    notes.push(newNote);
 
-    fs.writeFile(filePath, JSON.stringify(notes), (err) => {
+    fs.readFile(maxIdFilePath, "utf8", (err, data) => {
       if (err) {
         return console.log(err);
       }
-      res.json(newNote);
+      const maxId = JSON.parse(data);
+      console.log(maxId);
+      newNote.id = "" + (parseInt(maxId) + 1) ;
+      console.log(newNote);
+      notes.push(newNote);
+
+      fs.writeFile(maxIdFilePath, JSON.stringify(newNote.id), (err) => {
+        if (err) {
+          return console.log(err);
+        }
+      });
+
+      fs.writeFile(filePath, JSON.stringify(notes), (err) => {
+        if (err) {
+          return console.log(err);
+        }
+        res.json(newNote);
+      });
     });
   });
 });
@@ -52,7 +67,23 @@ app.post("/api/notes", (req, res) => {
 app.delete("/api/notes/:id", (req, res) => {
   const filePath = path.join(__dirname, "db", "db.json");
 
-  fs.readFile(filePath, "db", "db.json");
+  fs.readFile(filePath, "utf8", (err, data) => {
+    if (err) {
+      return console.log(err);
+    }
+
+    const notes = JSON.parse(data);
+    const id = req.params.id;
+
+    const filteredNotes = notes.filter((note) => note.id !== id);
+
+    fs.writeFile(filePath, JSON.stringify(filteredNotes), (err) => {
+      if (err) {
+        return console.log(err);
+      }
+      res.json({ ok: true });
+    });
+  });
 });
 
 app.listen(PORT, () => {
